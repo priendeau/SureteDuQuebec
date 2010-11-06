@@ -153,7 +153,22 @@ class DecoratorSQ:
           func( *args, **kwargs )
         return inner
     return decorator
-  
+
+  PropertyList=['getter','setter','property']
+
+  @staticmethod
+  def ShelveObjectTransponder( ClassName, ShelveObject , itemName, itemValue , TypeObj=None ):
+    if type( TypeObj ) == type( None ):
+      if not hasattr( getattr( ClassName, ShelveObject ), itemName ):
+        setattr( getattr( ClassName, ShelveObject ), itemName, itemValue )
+      else:
+        setattr( getattr( ClassName, ShelveObject ), itemName, itemValue )
+    if type( TypeObj ) == type( dict() ):
+      if not itemName in getattr( ClassName, ShelveObject ).keys():
+        setattr( ClassName, ShelveObject, { itemName:itemValue } )
+      else:
+        setattr( ClassName, ShelveObject, { itemName:itemValue } )
+
   @staticmethod
   def ParseTheKargs( ClassName,  ShelveObject, TypeObj ):
     
@@ -170,20 +185,43 @@ class DecoratorSQ:
               if not hasattr( ClassName, ItemKeyName ):
                 setattr( ClassName, ItemKeyName, kwargs[ItemKeyName] )
             else:
-              if TypeObj == None:
-                if not hasattr( getattr( ClassName,ShelveObject ), ItemKeyName ):
-                  setattr( getattr( ClassName,ShelveObject ), ItemKeyName, kwargs[ItemKeyName] )
-                else:
-                  setattr( getattr( ClassName,ShelveObject ), ItemKeyName, kwargs[ItemKeyName] )
-              else:
-                if type(TypeObj) == type(dict()):
-                  if not ItemKeyName in getattr( ClassName,ShelveObject ).keys():
-                    setattr( ClassName,ShelveObject,  { ItemKeyName:kwargs[ItemKeyName] } )
-                  else:
-                    setattr( ClassName,ShelveObject, { ItemKeyName:kwargs[ItemKeyName] } )
+              #if TypeObj == None:
+              if type(TypeObj) in [ type(None),type(dict()) ]:
+                ShelveObjectTransponder( ClassName, ShelveObject , ItemKeyName, kwargs[ItemKeyName] , TypeObj )
           func( *args, **kwargs )
         return inner
     return decorator
+  
+##  @staticmethod
+##  def ParseTheKargs( ClassName,  ShelveObject, TypeObj ):
+##    
+##    """
+##    This Decorator Will:
+##    - Create a variable funcName being assigned automatically to funcName the FunctionName
+##
+##    The marshaller computes a key from function arguments
+##    """
+##    def decorator(func):
+##        def inner(*args, **kwargs):
+##          for ItemKeyName in kwargs.keys():
+##            if ShelveObject == None:
+##              if not hasattr( ClassName, ItemKeyName ):
+##                setattr( ClassName, ItemKeyName, kwargs[ItemKeyName] )
+##            else:
+##              if TypeObj == None:
+##                if not hasattr( getattr( ClassName,ShelveObject ), ItemKeyName ):
+##                  setattr( getattr( ClassName,ShelveObject ), ItemKeyName, kwargs[ItemKeyName] )
+##                else:
+##                  setattr( getattr( ClassName,ShelveObject ), ItemKeyName, kwargs[ItemKeyName] )
+##              else:
+##                if type(TypeObj) == type(dict()):
+##                  if not ItemKeyName in getattr( ClassName,ShelveObject ).keys():
+##                    setattr( ClassName,ShelveObject,  { ItemKeyName:kwargs[ItemKeyName] } )
+##                  else:
+##                    setattr( ClassName,ShelveObject, { ItemKeyName:kwargs[ItemKeyName] } )
+##          func( *args, **kwargs )
+##        return inner
+##    return decorator
 
   @staticmethod
   def InstanceFuncMessage( MessageName ):
